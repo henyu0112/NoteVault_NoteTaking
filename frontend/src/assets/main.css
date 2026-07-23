@@ -687,7 +687,7 @@ body::before {
 .btn:active, .btn-icon:active, .swatch-btn:active, .font-btn:active, .size-btn:active {
   transform: scale(0.96);
 }
-}
+
 .tooltip-value {
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.88);
