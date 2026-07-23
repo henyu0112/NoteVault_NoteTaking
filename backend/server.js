@@ -60,18 +60,10 @@ app.get('/api/health', (req, res) => {
 // Mount notes router
 app.use('/api/notes', notesRouter);
 
-// ─── Frontend Static Serving ───────────────────────────────────────────────────
-// Serve the compiled Vue frontend
-const path = require('path');
-const frontendDistPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendDistPath));
-
-// Fallback all other GET requests to Vue's index.html (for Vue Router history mode)
-app.get(/.*/, (req, res) => {
-  if (req.originalUrl.startsWith('/api')) {
-    return res.status(404).json({ success: false, error: `API Route ${req.method} ${req.url} not found.` });
-  }
-  res.sendFile(path.join(frontendDistPath, 'index.html'));
+// ─── Error Handling ─────────────────────────────────────────────────────────────
+// Fallback route for undefined endpoints
+app.use((req, res) => {
+  res.status(404).json({ success: false, error: 'Endpoint not found' });
 });
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
