@@ -325,6 +325,9 @@ function onDensityInput(e) {
   position: fixed;
   inset: 0;
   z-index: 9998;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 /* ── Side panel ────────────────────────────────────────────────────────────── */
