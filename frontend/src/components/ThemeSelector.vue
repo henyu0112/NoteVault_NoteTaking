@@ -353,6 +353,7 @@ function onDensityInput(e) {
   justify-content: space-between;
   padding: 20px 20px 16px;
   border-bottom: 1px solid var(--border-glass);
+  background-color: var(--bg-deep); /* Force opaque background */
   flex-shrink: 0;
 }
 .panel-title-row {
