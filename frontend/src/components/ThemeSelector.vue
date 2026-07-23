@@ -324,7 +324,7 @@ function onDensityInput(e) {
 .theme-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 9998;
 }
 
 /* ── Side panel ────────────────────────────────────────────────────────────── */
@@ -334,7 +334,7 @@ function onDensityInput(e) {
   right: 0;
   height: 100dvh;
   width: min(320px, 100vw);
-  z-index: 201;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-xl) 0 0 var(--radius-xl);

@@ -273,7 +273,7 @@ async function confirmDelete() {
 .app-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 10;
   border-radius: 0;
   border-top: none;
   border-left: none;
