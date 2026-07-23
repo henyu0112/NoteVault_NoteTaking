@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # ── Backend API (Node.js + Express + SQLite) ────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nodevault-api
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_PATH=/app/db/notes.db
+    volumes:
+      # Persist the SQLite database across container restarts
+      - sqlite_data:/app/db
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Frontend (Vue 3 + Vite → Nginx) ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # When running via Docker, nginx proxies /api → backend service
+        # so we keep /api as the base path (the nginx.conf handles the proxy)
+        - VITE_API_URL=/api
+    container_name: nodevault-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+# ── Named volumes ────────────────────────────────────────────────────────────
+volumes:
+  sqlite_data:
+    driver: local

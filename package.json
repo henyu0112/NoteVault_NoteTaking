@@ -1,0 +1,16 @@
+{
+  "name": "notes-app",
+  "version": "1.0.0",
+  "description": "NoteVault — Full-stack notes app (Vue 3 + Express + SQLite)",
+  "private": true,
+  "scripts": {
+    "dev":              "concurrently --names \"API,APP\" --prefix-colors \"magenta,cyan\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start":            "concurrently --names \"API,APP\" --prefix-colors \"magenta,cyan\" \"npm run start --prefix backend\" \"npm run dev --prefix frontend\"",
+    "install:all":      "npm install --prefix backend && npm install --prefix frontend",
+    "backend":          "npm run dev --prefix backend",
+    "frontend":         "npm run dev --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
