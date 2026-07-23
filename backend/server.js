@@ -67,7 +67,7 @@ const frontendDistPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendDistPath));
 
 // Fallback all other GET requests to Vue's index.html (for Vue Router history mode)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     return res.status(404).json({ success: false, error: `API Route ${req.method} ${req.url} not found.` });
   }
