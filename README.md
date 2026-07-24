@@ -2,6 +2,8 @@
 
 > A full-stack note-taking web app with a premium glassmorphism UI, built with **Vue 3**, **Node.js/Express**, and **SQLite**.
 
+![NoteVault Screenshot](./docs/screenshot.png)
+
 **🌐 Live Demo:** [https://note-vault-note-taking-kappa.vercel.app](https://note-vault-note-taking-kappa.vercel.app)
 
 **🚀 Backend API:** [https://notevaultnotetaking-production.up.railway.app/api](https://notevaultnotetaking-production.up.railway.app/api)
@@ -17,8 +19,8 @@
 git clone https://github.com/henyu0112/NoteVault_NoteTaking.git
 cd NoteVault_NoteTaking
 
-# 2. Install all dependencies (first time only)
-npm run install:all
+# 2. Install all dependencies (first time only — runs automatically on npm install)
+npm install
 
 # 3. Start both servers
 npm run dev
@@ -47,14 +49,37 @@ npm run dev
 
 ---
 
+## Docker
+
+Run the entire app with a single Docker Compose command — no Node.js installation needed:
+
+```bash
+# Build and start both containers
+docker-compose up --build
+
+# Stop containers
+docker-compose down
+
+# Stop and remove stored data (SQLite volume)
+docker-compose down -v
+```
+
+Then open → **http://localhost**
+
+The SQLite database is stored in a named Docker volume (`sqlite_data`) so your notes **persist across container restarts**.
+
+---
+
 ## Available Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start **both** backend + frontend (recommended) |
+| `npm install` | Install all dependencies for both backend + frontend (via `postinstall`) |
+| `npm run dev` | Start **both** backend + frontend simultaneously (recommended) |
 | `npm run backend` | Start backend only (port 3001) |
 | `npm run frontend` | Start frontend only (port 5173) |
-| `npm run install:all` | Install dependencies for both projects |
+| `npm run build` | Build the frontend for production |
+| `npm start` | Start the backend in production mode |
 
 ---
 
@@ -63,10 +88,11 @@ npm run dev
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | Vue 3 (Composition API) + Vite |
-| **Backend** | Node.js + Express |
+| **Backend** | Node.js + Express 5 |
 | **Database** | SQLite via `better-sqlite3` |
 | **Styling** | Vanilla CSS — Glassmorphism design system |
 | **HTTP Client** | Axios |
+| **Containerisation** | Docker + Docker Compose |
 | **Frontend Hosting** | Vercel |
 | **Backend Hosting** | Railway |
 
@@ -91,8 +117,8 @@ npm run dev
 
 ## REST API Reference
 
-Base URL: `http://localhost:3001/api`  
-Production URL: `https://notevaultnotetaking-production.up.railway.app/api`
+Base URL (local): `http://localhost:3001/api`
+Base URL (production): `https://notevaultnotetaking-production.up.railway.app/api`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -123,7 +149,7 @@ This app is split across two services for deployment:
 | **Backend** | [Railway](https://railway.app) | Node.js API + SQLite |
 | **Frontend** | [Vercel](https://vercel.com) | Vue 3 static site |
 
-> ⚠️ **Note on Data Persistence:** Railway runs the backend inside an ephemeral container. This means the SQLite database (`notes.db`) is reset every time Railway redeploys the backend (e.g., on every GitHub push). For permanent data storage, consider upgrading to a hosted database like Railway PostgreSQL or MongoDB Atlas.
+> ⚠️ **Note on Data Persistence:** Railway runs the backend inside an ephemeral container. This means the SQLite database (`notes.db`) resets every time Railway redeploys the backend (e.g. on every GitHub push). For permanent data storage, consider upgrading to a hosted database like Railway PostgreSQL or MongoDB Atlas.
 
 ### Step 1 — Deploy Backend to Railway
 
@@ -154,9 +180,13 @@ This app is split across two services for deployment:
 ```
 NoteVault_NoteTaking/
 ├── .gitignore
-├── package.json                ← Root scripts (concurrently)
+├── docker-compose.yml          ← Docker orchestration (local dev alternative)
+├── package.json                ← Root scripts (concurrently, postinstall)
 ├── README.md
+├── docs/
+│   └── screenshot.png
 ├── backend/
+│   ├── Dockerfile
 │   ├── .env.example            ← Copy to .env and configure
 │   ├── db/
 │   │   ├── database.js         ← SQLite schema + init
@@ -166,6 +196,8 @@ NoteVault_NoteTaking/
 │   ├── server.js               ← Express entry point
 │   └── package.json
 └── frontend/
+    ├── Dockerfile              ← Multi-stage: build + nginx
+    ├── nginx.conf              ← SPA fallback + API proxy
     ├── .env.example            ← Copy to .env.local to configure
     ├── index.html
     ├── vite.config.js          ← Dev proxy → localhost:3001
