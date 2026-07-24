@@ -2,9 +2,9 @@
 
 > A full-stack note-taking web app with a premium glassmorphism UI, built with **Vue 3**, **Node.js/Express**, and **SQLite**.
 
-![NoteVault Screenshot](./docs/screenshot.png)
+**🌐 Live Demo:** [https://note-vault-note-taking-kappa.vercel.app](https://note-vault-note-taking-kappa.vercel.app)
 
-**Live Demo:** `https://nodevault.vercel.app` *(add your Vercel URL here after deploying)*
+**🚀 Backend API:** [https://notevaultnotetaking-production.up.railway.app/api](https://notevaultnotetaking-production.up.railway.app/api)
 
 ---
 
@@ -14,8 +14,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/nodevault.git
-cd nodevault
+git clone https://github.com/henyu0112/NoteVault_NoteTaking.git
+cd NoteVault_NoteTaking
 
 # 2. Install all dependencies (first time only)
 npm run install:all
@@ -47,27 +47,6 @@ npm run dev
 
 ---
 
-## Docker (Bonus)
-
-Run the entire app with a single Docker Compose command — no Node.js installation needed:
-
-```bash
-# Build and start both containers
-docker-compose up --build
-
-# Stop containers
-docker-compose down
-
-# Stop and remove stored data (SQLite volume)
-docker-compose down -v
-```
-
-Then open → **http://localhost**
-
-The SQLite database is stored in a named Docker volume (`sqlite_data`) so your notes **persist across container restarts**.
-
----
-
 ## Available Commands
 
 | Command | Description |
@@ -82,13 +61,14 @@ The SQLite database is stored in a named Docker volume (`sqlite_data`) so your n
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|------------|
 | **Frontend** | Vue 3 (Composition API) + Vite |
 | **Backend** | Node.js + Express |
 | **Database** | SQLite via `better-sqlite3` |
 | **Styling** | Vanilla CSS — Glassmorphism design system |
 | **HTTP Client** | Axios |
-| **Containerisation** | Docker + Docker Compose |
+| **Frontend Hosting** | Vercel |
+| **Backend Hosting** | Railway |
 
 ---
 
@@ -111,7 +91,8 @@ The SQLite database is stored in a named Docker volume (`sqlite_data`) so your n
 
 ## REST API Reference
 
-Base URL: `http://localhost:3001/api`
+Base URL: `http://localhost:3001/api`  
+Production URL: `https://notevaultnotetaking-production.up.railway.app/api`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -142,51 +123,40 @@ This app is split across two services for deployment:
 | **Backend** | [Railway](https://railway.app) | Node.js API + SQLite |
 | **Frontend** | [Vercel](https://vercel.com) | Vue 3 static site |
 
+> ⚠️ **Note on Data Persistence:** Railway runs the backend inside an ephemeral container. This means the SQLite database (`notes.db`) is reset every time Railway redeploys the backend (e.g., on every GitHub push). For permanent data storage, consider upgrading to a hosted database like Railway PostgreSQL or MongoDB Atlas.
+
 ### Step 1 — Deploy Backend to Railway
 
 1. Push your code to GitHub
 2. Go to [railway.app](https://railway.app) → **New Project → Deploy from GitHub repo**
 3. Select the repo, set the **Root Directory** to `backend`
-4. Add these environment variables in Railway's dashboard:
+4. Add this environment variable in Railway's dashboard:
    ```
    PORT=3001
-   DB_PATH=./db/notes.db
-   ALLOWED_ORIGINS=https://your-app.vercel.app
    ```
-5. Copy your Railway public URL (e.g. `https://nodevault-api.up.railway.app`)
+5. Copy your Railway public URL (e.g. `https://your-app.up.railway.app`)
 
 ### Step 2 — Deploy Frontend to Vercel
 
-1. Go to [vercel.com](https://vercel.com) → **New Project → Import from GitHub**
+1. Go to [vercel.com](https://vercel.com) → **Add New → Project → Import from GitHub**
 2. Set **Root Directory** to `frontend`
-3. Add this environment variable in Vercel's dashboard:
+3. Set the **Framework Preset** to `Vite`
+4. Add this environment variable in Vercel's dashboard:
    ```
    VITE_API_URL=https://your-railway-url.up.railway.app/api
    ```
-4. Deploy — Vercel will auto-detect Vite and build it
-
-### Step 3 — Update CORS on Railway
-
-Once you have your Vercel URL, go back to Railway and update:
-```
-ALLOWED_ORIGINS=https://your-actual-vercel-url.vercel.app
-```
+5. Click **Deploy** — Vercel will auto-detect Vite and build it
 
 ---
 
 ## Project Structure
 
 ```
-nodevault/
+NoteVault_NoteTaking/
 ├── .gitignore
-├── .env.example (→ not committed, see backend/.env.example)
-├── docker-compose.yml          ← Docker orchestration
 ├── package.json                ← Root scripts (concurrently)
 ├── README.md
-├── docs/
-│   └── screenshot.png
 ├── backend/
-│   ├── Dockerfile
 │   ├── .env.example            ← Copy to .env and configure
 │   ├── db/
 │   │   ├── database.js         ← SQLite schema + init
@@ -196,9 +166,9 @@ nodevault/
 │   ├── server.js               ← Express entry point
 │   └── package.json
 └── frontend/
-    ├── Dockerfile              ← Multi-stage: build + nginx
-    ├── nginx.conf              ← SPA fallback + API proxy
     ├── .env.example            ← Copy to .env.local to configure
+    ├── index.html
+    ├── vite.config.js          ← Dev proxy → localhost:3001
     ├── src/
     │   ├── assets/
     │   │   └── main.css                ← Global design system (12 themes)
@@ -219,7 +189,6 @@ nodevault/
     │   │   └── HomeView.vue            ← Main dashboard
     │   ├── App.vue
     │   └── main.js
-    ├── vite.config.js          ← Dev proxy → localhost:3001
     └── package.json
 ```
 
